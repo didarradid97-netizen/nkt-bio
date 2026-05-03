@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Жаттықтырушы — NKT Biology 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1f2d45;
+    --border2: #2a3f5f;
+    --accent: #3b82f6;
+    --accent2: #60a5fa;
+    --green: #10b981;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --text: #f1f5f9;
+    --text2: #94a3b8;
+    --text3: #475569;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow-orb {
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+    top: -200px; right: -200px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(10,15,26,0.9);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: var(--text2);
+    font-weight: 500;
+  }
+
+  .back-btn {
+    font-size: 13px;
+    color: var(--text2);
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .back-btn:hover { color: var(--text); border-color: var(--accent); }
+
+  /* Hero */
+  .hero {
+    padding: 60px 0 40px;
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent2);
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.2);
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .pulse {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 span {
+    color: var(--accent);
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: var(--text2);
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 40px 0;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -1px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  /* API Key input */
+  .api-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .api-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .api-input-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .api-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .api-input:focus { border-color: var(--accent); }
+  .api-input::placeholder { color: var(--text3); }
+
+  .btn {
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    font-family: 'Manrope', sans-serif;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: #2563eb; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border2);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Subject selector */
+  .subject-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .subject-tab {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    transition: all 0.2s;
+    font-family: 'Manrope', sans-serif;
+  }
+
+  .subject-tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .subject-tab:hover:not(.active) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Question card */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .q-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .q-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-bio { background: rgba(16,185,129,0.15); color: #10b981; }
+  .badge-chem { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .badge-num { background: rgba(59,130,246,0.1); color: var(--accent2); font-family: 'JetBrains Mono', monospace; }
+
+  .q-text {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  /* Options */
+  .options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .option {
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border2);
+    background: var(--bg);
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+    text-align: left;
+  }
+
+  .option:hover:not(.disabled) {
+    border-color: var(--accent);
+    color: var(--text);
+    background: rgba(59,130,246,0.05);
+  }
+
+  .option.selected { border-color: var(--accent); background: rgba(59,130,246,0.1); color: var(--text); }
+  .option.correct { border-color: var(--green); background: rgba(16,185,129,0.1); color: #10b981; }
+  .option.wrong { border-color: var(--red); background: rgba(239,68,68,0.1); color: #ef4444; }
+  .option.disabled { cursor: default; }
+
+  .opt-letter {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .option.correct .opt-letter { background: rgba(16,185,129,0.2); }
+  .option.wrong .opt-letter { background: rgba(239,68,68,0.2); }
+  .option.selected .opt-letter { background: rgba(59,130,246,0.2); }
+
+  /* AI Explanation */
+  .ai-box {
+    background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(16,185,129,0.05));
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 16px;
+    display: none;
+  }
+
+  .ai-box.visible { display: block; animation: fadeIn 0.4s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ai-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .ai-avatar {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .ai-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  .ai-model {
+    font-size: 11px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .ai-text {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+
+  .typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 16px;
+    background: var(--accent);
+    animation: blink 1s infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* Actions */
+  .q-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* Progress */
+  .progress-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-label { font-size: 13px; font-weight: 600; color: var(--text2); }
+  .progress-score { font-size: 13px; font-weight: 700; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+
+  .progress-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  /* Loading */
+  .loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text2);
+    font-size: 14px;
+  }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Result screen */
+  .result-screen {
+    text-align: center;
+    padding: 60px 20px;
+    display: none;
+  }
+
+  .result-screen.visible { display: block; animation: fadeIn 0.5s ease; }
+
+  .result-emoji { font-size: 64px; margin-bottom: 20px; }
+
+  .result-score {
+    font-size: 72px;
+    font-weight: 800;
+    letter-spacing: -3px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 8px;
+  }
+
+  .result-label { font-size: 18px; color: var(--text2); margin-bottom: 32px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Setup screen */
+  .setup-screen { padding: 40px 0; }
+  .main-screen { display: none; }
+  .main-screen.visible { display: block; }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+
+  /* Suggested questions */
+  .suggest-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .suggest-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .suggest-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .suggest-card .s-topic {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .suggest-card .s-q {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px 0 24px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  @media (max-width: 600px) {
+    .stats { grid-template-columns: repeat(3,1fr); }
+    .hero h1 { font-size: 28px; }
+    .q-text { font-size: 15px; }
+    .api-input-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="glow-orb"></div>
+
+<header>
+  <div class="container">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">🧬</div>
+        <div>
+          <div class="logo-text">NKT Biology 2026</div>
+          <div class="logo-sub">AI Жаттықтырушы</div>
+        </div>
+      </a>
+      <a href="index.html" class="back-btn">← Артқа</a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">
+      <div class="pulse"></div>
+      Жасанды интеллект — Gemini AI
+    </div>
+    <h1>Сенің жеке <span>AI</span><br>жаттықтырушың</h1>
+    <p>Жауап бер, қатеңді бір секундта түсін — жай тест емес, нақты ұғым.</p>
+  </div>
+
+  <!-- Setup screen -->
+  <div class="setup-screen" id="setupScreen">
+    <div class="api-section">
+      <div class="api-label">
+        🔑 Google Gemini API кілті
+      </div>
+      <div class="api-input-row">
+        <input type="password" class="api-input" id="apiKeyInput"
+          placeholder="gsk_... (Groq Console-дан алынған кілт)"
+          autocomplete="off">
+        <button class="btn btn-primary" onclick="startTutor()">Бастау →</button>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--text3);">
+        🔒 Кілт тек сенің браузеріңде сақталады, серверге жіберілмейді
+      </div>
+    </div>
+
+    <div class="section-title">Жылдам сұрақтар — тікелей бастау</div>
+    <div class="suggest-grid" id="suggestGrid"></div>
+  </div>
+
+  <!-- Main screen -->
+  <div class="main-screen" id="mainScreen">
+
+    <div class="progress-bar-wrap">
+      <div class="progress-top">
+        <span class="progress-label" id="progressLabel">Сұрақ 1 / 10</span>
+        <span class="progress-score" id="progressScore">Дұрыс: 0</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="subject-tabs" id="subjectTabs">
+      <button class="subject-tab active" onclick="selectSubject('bio',this)">🧬 Биология</button>
+      <button class="subject-tab" onclick="selectSubject('chem',this)">⚗️ Химия</button>
+      <button class="subject-tab" onclick="selectSubject('mix',this)">🔀 Аралас</button>
+    </div>
+
+    <div id="questionArea"></div>
+    <div id="resultScreen" class="result-screen"></div>
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<footer>
+  <div class="container">
+    © 2026 NKT Biology — Толегенов Д.Д. · Powered by Google Gemini AI
+  </div>
+</footer>
+
+<script>
+const QUESTIONS = {
+  bio: [
+    { q: "Митоздың нәтижесінде қанша еншілес жасуша түзіледі?", opts: ["2 диплоидты", "4 гаплоидты", "2 гаплоидты", "4 диплоидты"], ans: 0, topic: "Цитология" },
+    { q: "Хлоропласттың ішкі кеңістігі (тилакоидтар орналасқан сұйық фаза) қалай аталады?", opts: ["Люмен", "Ламелла", "Строма", "Грана"], ans: 2, topic: "Цитология" },
+    { q: "ДНҚ репликациясы жасушаның қай кезеңінде жүреді?", opts: ["G1 фазасы", "S фазасы", "G2 фазасы", "М фазасы"], ans: 1, topic: "Генетика" },
+    { q: "Фотосинтездің жарықтық фазасы хлоропласттың қай бөлігінде жүреді?", opts: ["Строма", "Матрикс", "Тилакоид мембранасы", "Цитоплазма"], ans: 2, topic: "Биохимия" },
+    { q: "Мальпигий түтікшелері арқылы зиянды заттарды жоятын жануарлар:", opts: ["Буылтық құрттар", "Жәндіктер", "Құстар", "Балықтар"], ans: 1, topic: "Физиология" },
+    { q: "Доминантты белгіні гетерозиготалы организмнен фенотип бойынша анықтайтын будандастыру:", opts: ["Өзара будандастыру", "Талдаушы будандастыру", "Қайтымды будандастыру", "Полигибридті будандастыру"], ans: 1, topic: "Генетика" },
+    { q: "Экожүйедегі энергияның бір трофикалық деңгейден екіншісіне өту тиімділігі шамамен:", opts: ["50%", "30%", "10%", "1%"], ans: 2, topic: "Экология" },
+    { q: "Вирустардың жасушадан тыс формасы қалай аталады?", opts: ["Вирион", "Прион", "Бактериофаг", "Плазмид"], ans: 0, topic: "Микробиология" },
+    { q: "АТФ-тің толық атауы:", opts: ["Аденозин трифосфат", "Аденозин дифосфат", "Аденин трифосфат", "Аденозин монофосфат"], ans: 0, topic: "Биохимия" },
+    { q: "Жыныстық хромосомалары XY болатын жыныс:", opts: ["Әйел", "Еркек", "Гермафродит", "Нейтральды"], ans: 1, topic: "Генетика" },
+  ],
+  chem: [
+    { q: "Экзотермиялық реакция дегеніміз:", opts: ["Жылу сіңірілетін реакция", "Жылу бөлінетін реакция", "Тек газ бөлінетін реакция", "Тек тұнба түзілетін реакция"], ans: 1, topic: "Термодинамика" },
+    { q: "Fe³⁺ ионын анықтауға қолданылатын реагент:", opts: ["NaOH", "KSCN", "BaCl₂", "AgNO₃"], ans: 1, topic: "Аналитика" },
+    { q: "Алкандардың жалпы формуласы:", opts: ["CₙH₂ₙ", "CₙH₂ₙ₋₂", "CₙH₂ₙ₊₂", "CₙHₙ"], ans: 2, topic: "Органикалық химия" },
+    { q: "Вант-Гофф ережесі: температураны 10°С арттырғанда реакция жылдамдығы:", opts: ["2-4 есе артады", "2 есе азаяды", "Өзгермейді", "10 есе артады"], ans: 0, topic: "Кинетика" },
+    { q: "Бензол молекуласындағы байланыс түрі:", opts: ["Толық қос байланыс", "Толық жалғыз байланыс", "Делокализацияланған π-байланыс", "Үш байланыс"], ans: 2, topic: "Органикалық химия" },
+    { q: "Тотығу процесі — бұл:", opts: ["Электрон қосып алу", "Электрон беру", "Протон беру", "Протон қосып алу"], ans: 1, topic: "ТТР" },
+    { q: "Электролизде катодта жүретін процесс:", opts: ["Тотығу", "Тотықсыздану", "Ионизация", "Нейтрализация"], ans: 1, topic: "Электрохимия" },
+    { q: "Иондық байланыс кезінде электртерістілік айырмашылығы:", opts: ["0-тен аз", "0.4-тен аз", "1.7-ден жоғары", "0.4–1.7 аралығында"], ans: 2, topic: "Байланыс" },
+    { q: "«Күміс айна» реакциясы арқылы анықталатын функционалды топ:", opts: ["Кетон -CO-", "Альдегид -CHO", "Спирт -OH", "Қышқыл -COOH"], ans: 1, topic: "Органикалық химия" },
+    { q: "Ле-Шателье принципі: қысым артса тепе-теңдік қай жаққа ығысады?", opts: ["Газ молдері аз жаққа", "Газ молдері көп жаққа", "Өзгермейді", "Температураға байланысты"], ans: 0, topic: "Тепе-теңдік" },
+  ]
+};
+
+QUESTIONS.mix = [...QUESTIONS.bio, ...QUESTIONS.chem].sort(() => Math.random() - 0.5);
+
+const QUICK = [
+  { topic: "Цитология", q: "Митоз бен мейоздың айырмашылығы қандай?" },
+  { topic: "Генетика", q: "Доминантты және рецессивті белгі дегеніміз не?" },
+  { topic: "Экология", q: "Трофикалық деңгей дегеніміз не, мысал келтір" },
+  { topic: "Химия", q: "Тотығу-тотықсыздану реакциясын қалай анықтайды?" },
+  { topic: "Биохимия", q: "АТФ синтезі қалай жүреді?" },
+  { topic: "Физиология", q: "Жасушалық тыныс алу кезеңдерін түсіндір" },
+];
+
+let apiKey = '';
+let currentSubject = 'bio';
+let questions = [];
+let currentIdx = 0;
+let score = 0;
+let answered = false;
+let totalAnswered = 0;
+
+// Populate quick questions
+const sg = document.getElementById('suggestGrid');
+QUICK.forEach(item => {
+  const card = document.createElement('div');
+  card.className = 'suggest-card';
+  card.innerHTML = `<div class="s-topic">${item.topic}</div><div class="s-q">${item.q}</div>`;
+  card.onclick = () => {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    if (!key) { showToast('⚠️ Алдымен API кілтті енгіз'); return; }
+    apiKey = key;
+    localStorage.setItem('groq_key', key);
+    showSetup(false);
+    askFreeQuestion(item.q, item.topic);
+  };
+  sg.appendChild(card);
+});
+
+// Load saved key
+const saved = localStorage.getItem('groq_key');
+if (saved) document.getElementById('apiKeyInput').value = saved;
+
+function startTutor() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) { showToast('⚠️ API кілтін енгіз'); return; }
+  if (!key.startsWith('gsk_')) { showToast('❌ Кілт форматы қате — gsk_... болуы керек'); return; }
+  apiKey = key;
+  localStorage.setItem('groq_key', key);
+  showSetup(false);
+  loadQuestions();
+}
+
+function showSetup(show) {
+  document.getElementById('setupScreen').style.display = show ? 'block' : 'none';
+  const ms = document.getElementById('mainScreen');
+  if (!show) ms.classList.add('visible'); else ms.classList.remove('visible');
+}
+
+function selectSubject(subj, el) {
+  currentSubject = subj;
+  document.querySelectorAll('.subject-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  loadQuestions();
+}
+
+function loadQuestions() {
+  const pool = subj => [...QUESTIONS[subj]].sort(() => Math.random() - 0.5).slice(0, 10);
+  questions = pool(currentSubject);
+  currentIdx = 0; score = 0; totalAnswered = 0; answered = false;
+  document.getElementById('resultScreen').classList.remove('visible');
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('questionArea').style.display = 'block';
+  updateProgress();
+  renderQuestion();
+}
+
+function updateProgress() {
+  const total = questions.length;
+  const pct = total > 0 ? Math.round((totalAnswered / total) * 100) : 0;
+  document.getElementById('progressLabel').textContent = `Сұрақ ${currentIdx + 1} / ${total}`;
+  document.getElementById('progressScore').textContent = `Дұрыс: ${score}`;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function renderQuestion() {
+  if (currentIdx >= questions.length) { showResult(); return; }
+  answered = false;
+  const q = questions[currentIdx];
+  const letters = ['А', 'Б', 'В', 'Г'];
+  const subjectBadge = currentSubject === 'chem' || q.topic.includes('химия') || q.topic.includes('Химия') || q.topic.includes('ТТР') || q.topic.includes('Кинетика') || q.topic.includes('Термо') || q.topic.includes('Байланыс') || q.topic.includes('Органик') || q.topic.includes('Электро') || q.topic.includes('Тепе') || q.topic.includes('Аналит')
+    ? `<span class="q-badge badge-chem">Химия</span>`
+    : `<span class="q-badge badge-bio">Биология</span>`;
+
+  document.getElementById('questionArea').innerHTML = `
+    <div class="question-card" id="qCard">
+      <div class="q-header">
+        <div class="q-meta">
+          ${subjectBadge}
+          <span class="q-badge badge-num">#${currentIdx + 1}</span>
+          <span class="q-badge" style="background:rgba(148,163,184,0.1);color:var(--text2)">${q.topic}</span>
+        </div>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="optionsArea">
+        ${q.opts.map((opt, i) => `
+          <button class="option" onclick="selectOption(${i})" id="opt${i}">
+            <span class="opt-letter">${letters[i]}</span>
+            ${opt}
+          </button>
+        `).join('')}
+      </div>
+      <div class="ai-box" id="aiBox">
+        <div class="ai-header">
+          <div class="ai-avatar">🤖</div>
+          <div>
+            <div class="ai-name">Groq AI Жаттықтырушы</div>
+            <div class="ai-model">llama-3.3-70b · Groq</div>
+          </div>
+        </div>
+        <div class="ai-text" id="aiText"><div class="loading"><div class="spinner"></div>Жауап дайындалуда...</div></div>
+      </div>
+      <div class="q-actions" id="qActions" style="display:none">
+        <button class="btn btn-primary" onclick="nextQuestion()">Келесі сұрақ →</button>
+        <button class="btn btn-outline" onclick="askMore()">Толығырақ сұра ↗</button>
+      </div>
+    </div>
+  `;
+}
+
+async function selectOption(chosen) {
+  if (answered) return;
+  answered = true;
+  totalAnswered++;
+  const q = questions[currentIdx];
+  const correct = q.ans;
+  const letters = ['А', 'Б', 'В', 'Г'];
+
+  document.querySelectorAll('.option').forEach((el, i) => {
+    el.classList.add('disabled');
+    if (i === correct) el.classList.add('correct');
+    else if (i === chosen) el.classList.add('wrong');
+  });
+
+  if (chosen === correct) score++;
+  updateProgress();
+
+  // Show AI box
+  const aiBox = document.getElementById('aiBox');
+  aiBox.classList.add('visible');
+  document.getElementById('qActions').style.display = 'flex';
+
+  await getAIExplanation(q, chosen, correct, letters);
+}
+
+async function getAIExplanation(q, chosen, correct, letters) {
+  const isCorrect = chosen === correct;
+  const prompt = `Сен ОЗП/НКТ Биология және Химия пәнінің AI жаттықтырушысысың. Қысқа, нақты, қазақша жауап бер.
+
+Тақырып: ${q.topic}
+Сұрақ: ${q.q}
+Оқушы таңдады: ${letters[chosen]}) ${q.opts[chosen]}
+Дұрыс жауап: ${letters[correct]}) ${q.opts[correct]}
+Нәтиже: ${isCorrect ? '✅ Дұрыс!' : '❌ Қате'}
+
+${isCorrect
+  ? 'Оқушы дұрыс жауап берді. 2-3 сөйлеммен неге дұрыс екенін түсіндір. Соңында бір қызықты факт немесе байланысты ұғым айт.'
+  : 'Оқушы қате жауап берді. 1) Неге қате екенін түсіндір. 2) Дұрыс жауаптың себебін нақты түсіндір. 3) Осы тақырыпты есте сақтауға арналған бір кеңес бер. Жалпы 4-5 сөйлем.'}
+
+Жауапты тікелей бастай бер, "Жауап:" деп бастама.`;
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 400
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      document.getElementById('aiText').textContent = '⚠️ API қате: ' + (err.error?.message || 'Кілтті тексер.');
+      return;
+    }
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content || 'Жауап алынбады';
+    const aiTextEl = document.getElementById('aiText');
+    aiTextEl.innerHTML = '<span class="typing-cursor"></span>';
+    let i = 0;
+    function type() {
+      if (i < text.length) {
+        aiTextEl.innerHTML = text.slice(0, i + 1) + '<span class="typing-cursor"></span>';
+        i++;
+        setTimeout(type, 12);
+      } else { aiTextEl.textContent = text; }
+    }
+    type();
+  } catch (e) {
+    document.getElementById('aiText').textContent = '⚠️ Интернет қосылымын немесе API кілтті тексер.';
+  }
+}
+
+async function askFreeQuestion(question, topic) {
+  document.getElementById('questionArea').innerHTML = `
+    <div class="question-card">
+      <div class="q-meta" style="margin-bottom:16px">
+        <span class="q-badge badge-bio">${topic}</span>
+        <span class="q-badge" style="background:rgba(59,130,246,0.1);color:var(--accent2)">Еркін сұрақ</span>
+      </div>
+      <div class="q-text">${question}</div>
+      <div class="ai-box visible">
+        <div class="ai-header">
+          <div class="ai-avatar">🤖</div>
+          <div>
+            <div class="ai-name">Groq AI Жаттықтырушы</div>
+            <div class="ai-model">llama-3.3-70b · Groq</div>
+          </div>
+        </div>
+        <div class="ai-text" id="aiText"><div class="loading"><div class="spinner"></div>Жауап дайындалуда...</div></div>
+      </div>
+      <div class="q-actions">
+        <button class="btn btn-primary" onclick="loadQuestions()">Тест бастау →</button>
+      </div>
+    </div>
+  `;
+
+  const prompt = `Сен ОЗП/НКТ Биология және Химия пәнінің AI жаттықтырушысысың.
+Тақырып: ${topic}
+Сұрақ: ${question}
+
+ОЗП/НКТ оқушысына арналған нақты, қысқа, қазақша жауап бер. 5-7 сөйлем. Маңызды терминдерді атап өт.`;
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 500
+      })
+    });
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content || 'Жауап алынбады';
+    const el = document.getElementById('aiText');
+    el.innerHTML = '';
+    let i = 0;
+    function type() {
+      if (i < text.length) {
+        el.innerHTML = text.slice(0, i + 1) + '<span class="typing-cursor"></span>';
+        i++;
+        setTimeout(type, 10);
+      } else { el.textContent = text; }
+    }
+    type();
+  } catch(e) {
+    document.getElementById('aiText').textContent = '⚠️ Интернет қосылымын немесе API кілтті тексер.';
+  }
+}
+
+function askMore() {
+  const q = questions[currentIdx];
+  const topic = q ? q.topic : 'Биология';
+  const question = q ? `${q.q} — бұл туралы толығырақ түсіндір, мысал келтір` : '';
+  askFreeQuestion(question, topic);
+}
+
+function nextQuestion() {
+  currentIdx++;
+  if (currentIdx >= questions.length) { showResult(); return; }
+  updateProgress();
+  renderQuestion();
+}
+
+function showResult() {
+  document.getElementById('questionArea').style.display = 'none';
+  const pct = Math.round((score / questions.length) * 100);
+  let emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : pct >= 40 ? '📚' : '💪';
+  let msg = pct >= 80 ? 'Керемет! Өте жақсы нәтиже!' : pct >= 60 ? 'Жақсы! Бірақ жетілдіруге болады.' : pct >= 40 ? 'Дайындалу керек. Тақырыптарды қайталайық.' : 'Үмітті жоғалтпа! Оқуды жалғастыр.';
+  const rs = document.getElementById('resultScreen');
+  rs.style.display = 'block';
+  rs.classList.add('visible');
+  rs.innerHTML = `
+    <div class="result-emoji">${emoji}</div>
+    <div class="result-score" style="color:${pct>=60?'var(--green)':'var(--amber)'}">${pct}%</div>
+    <div class="result-label">${score} / ${questions.length} дұрыс — ${msg}</div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="loadQuestions()">Қайтадан тапсыру</button>
+      <button class="btn btn-outline" onclick="selectSubject('mix',document.querySelector('.subject-tab'))">Аралас тест</button>
+    </div>
+  `;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
